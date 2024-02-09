@@ -1,93 +1,46 @@
-﻿//https://www.codewars.com/kata/5279f6fe5ab7f447890006a7/train/csharp
+﻿//https://www.codewars.com/kata/54d512e62a5e54c96200019e/train/csharp
+
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-public class PickPeaks
+public class PrimeDecomp
 {
-    public static Dictionary<string, List<int>> GetPeaks(int[] arr)
+    public static String factors(int lst)
     {
-        Dictionary<string, List<int>> picksDictionary = new Dictionary<string, List<int>>();
-        int peak = 0, pos = 0;
-        picksDictionary.Add("pos", new List<int>());
-        picksDictionary.Add("peaks", new List<int>());
-        
-        for (int i = 1; i < arr.Length - 1; i++)
+        String result = "";
+        int i = 2, count = 0;
+        do
         {
-            if (arr[i] > arr[i - 1])
+            if (lst % i == 0)
             {
-                pos = i;
-                peak = arr[i];
+                lst /= i;
+                count++;
             }
-            if (arr[i] > arr[i + 1] && pos != 0)
+            
+            if (lst % i == 0 && lst != 1) continue;
+            
+            if (count > 0)
             {
-                picksDictionary["pos"].Add(pos);
-                picksDictionary["peaks"].Add(peak);
-                pos = 0;
-                peak = 0;
+                result += count > 1 ? $"({i}**{count})" : $"({i})";
             }
-        }
 
-        return picksDictionary;
+            count = 0;
+            i += i % 2 == 0 ? 1 : 2;
+            
+        } while (lst != 1);
+
+        return result;
     }
 
+
     [TestFixture]
-    public class SolutionTest
-    {
-
-        private static string[] msg =
-        {
-            "1 should support finding peaks",
-            "2 should support finding peaks, but should ignore peaks on the edge of the array",
-            "3 should support finding peaks; if the peak is a plateau, it should only return the position of the first element of the plateau",
-            "4 should support finding peaks; if the peak is a plateau, it should only return the position of the first element of the plateau",
-            "5 should support finding peaks, but should ignore peaks on the edge of the array",
-            "6 should support finding peaks; if the peak is in an end of a plateau"
-        };
-
-        private static int[][] array =
-        {
-            new int[] { 1, 2, 3, 6, 4, 1, 2, 3, 2, 1 },
-            new int[] { 3, 2, 3, 6, 4, 1, 2, 3, 2, 1, 2, 3 },
-            new int[] { 3, 2, 3, 6, 4, 1, 2, 3, 2, 1, 2, 2, 2, 1 },
-            new int[] { 2, 1, 3, 1, 2, 2, 2, 2, 1 },
-            new int[] { 2, 1, 3, 1, 2, 2, 2, 2 },
-            new int[] { 6, 10, 15, 13, -2, 8, 13, 13, 14, 0, -2 }
-        };
-
-        private static int[][] posS =
-        {
-            new int[] { 3, 7 },
-            new int[] { 3, 7 },
-            new int[] { 3, 7, 10 },
-            new int[] { 2, 4 },
-            new int[] { 2 },
-            new int[] { 2, 8 }
-        };
-
-        private static int[][] peaksS =
-        {
-            new int[] { 6, 3 },
-            new int[] { 6, 3 },
-            new int[] { 6, 3, 2 },
-            new int[] { 3, 2 },
-            new int[] { 3 },
-            new int[] { 15, 14}
-        };
+    public class PrimeDecompTests {
 
         [Test]
-        public void SampleTests()
-        {
-            for (int n = 0; n < msg.Length; n++)
-            {
-                int[] p1 = posS[n], p2 = peaksS[n];
-                var expected = new Dictionary<string, List<int>>()
-                {
-                    ["pos"] = p1.ToList(),
-                    ["peaks"] = p2.ToList()
-                };
-                var actual = PickPeaks.GetPeaks(array[n]);
-                ClassicAssert.AreEqual(expected, actual, msg[n]);
-            }
+        public void Test1() {
+  
+            int lst = 7775460;
+            ClassicAssert.AreEqual("(2**2)(3**3)(5)(7)(11**2)(17)", PrimeDecomp.factors(lst));
         }
     }
 }
