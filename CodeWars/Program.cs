@@ -3,33 +3,34 @@
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-public class PrimeDecomp
+public class Permutations
 {
-    public static String factors(int lst)
+    public static List<String> SinglePermutations(string s)
     {
-        String result = "";
-        int i = 2, count = 0;
-        do
+        List<char> arr = s.ToCharArray().ToList();
+        List<string>  result = new List<string>();
+
+        _Permute(arr, ref result, "");
+        
+        return result.Distinct().ToList();
+    }
+
+    private static void _Permute(List<char> arr, ref List<string> result, string memo)
+    {
+        for (int i = 0; i < arr.Count; i++)
         {
-            if (lst % i == 0)
+            var current = arr[i];
+            arr.RemoveAt(i);
+
+            if (arr.Count == 0)
             {
-                lst /= i;
-                count++;
-            }
-            
-            if (lst % i == 0 && lst != 1) continue;
-            
-            if (count > 0)
-            {
-                result += count > 1 ? $"({i}**{count})" : $"({i})";
+                result.Add(memo + current);
             }
 
-            count = 0;
-            i += i % 2 == 0 ? 1 : 2;
+            _Permute(arr, ref result, memo + current);
             
-        } while (lst != 1);
-
-        return result;
+            arr.Insert(i, current);
+        }
     }
 
 
@@ -37,10 +38,26 @@ public class PrimeDecomp
     public class PrimeDecompTests {
 
         [Test]
-        public void Test1() {
-  
-            int lst = 7775460;
-            ClassicAssert.AreEqual("(2**2)(3**3)(5)(7)(11**2)(17)", PrimeDecomp.factors(lst));
+        public void Example1()
+        {
+            ClassicAssert.AreEqual(new List<string> { "a" }, Permutations.SinglePermutations("a").OrderBy(x => x).ToList());
+        }
+
+        [Test]
+        public void Example2()
+        {
+            ClassicAssert.AreEqual(new List<string> { "ab", "ba" }, Permutations.SinglePermutations("ab").OrderBy(x => x).ToList());
+        }
+
+        [Test]
+        public void Example3()
+        {
+            ClassicAssert.AreEqual(new List<string> { "aabb", "abab", "abba", "baab", "baba", "bbaa" }, Permutations.SinglePermutations("aabb").OrderBy(x => x).ToList());
+        }
+        [Test]
+        public void Example4()
+        {
+            ClassicAssert.AreEqual(new List<string> { "abc","acb","bac","bca","cab","cba" }, Permutations.SinglePermutations("abc").OrderBy(x => x).ToList());
         }
     }
 }
