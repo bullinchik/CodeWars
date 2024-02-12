@@ -3,61 +3,32 @@
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-public class Permutations
+public class TimeFormat
 {
-    public static List<String> SinglePermutations(string s)
+    public static string GetReadableTime(int seconds)
     {
-        List<char> arr = s.ToCharArray().ToList();
-        List<string>  result = new List<string>();
-
-        _Permute(arr, ref result, "");
-        
-        return result.Distinct().ToList();
+        return string.Format("{0:d2}:{1:d2}:{2:d2}", seconds/3600, (seconds%3600)/60 , seconds%60);
     }
 
-    private static void _Permute(List<char> arr, ref List<string> result, string memo)
+    
+    private void DoTest(int seconds, String expected)
     {
-        for (int i = 0; i < arr.Count; i++)
-        {
-            var current = arr[i];
-            arr.RemoveAt(i);
-
-            if (arr.Count == 0)
-            {
-                result.Add(memo + current);
-            }
-
-            _Permute(arr, ref result, memo + current);
-            
-            arr.Insert(i, current);
-        }
+        String actual = TimeFormat.GetReadableTime(seconds);
+        ClassicAssert.AreEqual(expected, actual, "for " + seconds + " seconds");
     }
 
-
-    [TestFixture]
-    public class PrimeDecompTests {
-
-        [Test]
-        public void Example1()
-        {
-            ClassicAssert.AreEqual(new List<string> { "a" }, Permutations.SinglePermutations("a").OrderBy(x => x).ToList());
-        }
-
-        [Test]
-        public void Example2()
-        {
-            ClassicAssert.AreEqual(new List<string> { "ab", "ba" }, Permutations.SinglePermutations("ab").OrderBy(x => x).ToList());
-        }
-
-        [Test]
-        public void Example3()
-        {
-            ClassicAssert.AreEqual(new List<string> { "aabb", "abab", "abba", "baab", "baba", "bbaa" }, Permutations.SinglePermutations("aabb").OrderBy(x => x).ToList());
-        }
-        [Test]
-        public void Example4()
-        {
-            ClassicAssert.AreEqual(new List<string> { "abc","acb","bac","bca","cab","cba" }, Permutations.SinglePermutations("abc").OrderBy(x => x).ToList());
-        }
+    [Test]
+    public void SampleTests()
+    {
+        DoTest(     0, "00:00:00");
+        DoTest(    59, "00:00:59");
+        DoTest(    60, "00:01:00");
+        DoTest(    90, "00:01:30");
+        DoTest(  3599, "00:59:59");
+        DoTest(  3600, "01:00:00");
+        DoTest( 45296, "12:34:56");
+        DoTest( 86399, "23:59:59");
+        DoTest( 86400, "24:00:00");
+        DoTest(359999, "99:59:59");
     }
 }
